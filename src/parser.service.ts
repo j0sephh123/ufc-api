@@ -1,20 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { HttpService } from '@nestjs/axios';
 import { load } from 'cheerio';
-import { firstValueFrom } from 'rxjs';
 import { UpcomingEvent } from './models';
 
-const sherdogEventsUrl =
-  'https://www.sherdog.com/organizations/Ultimate-Fighting-Championship-UFC-2';
-
 @Injectable()
-export class AppService {
-  constructor(private readonly httpService: HttpService) {}
-
-  async getUpcomingEvent(): Promise<UpcomingEvent> {
-    const { data } = await firstValueFrom(
-      this.httpService.get(sherdogEventsUrl),
-    );
+export class ParserService {
+  sherdogEvents(data: string): UpcomingEvent {
     const $ = load(data);
     const [upcomingEvent] = $(
       '#upcoming_tab [itemtype="http://schema.org/Event"]',
