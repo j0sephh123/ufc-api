@@ -1,6 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { load } from 'cheerio';
-import { Fighter, Match, UpcomingEvent } from './models';
+import {
+  Fighter,
+  FighterPastMatch,
+  Match,
+  Round,
+  UpcomingEvent,
+} from './models';
 
 const selectors = {
   url: '[itemprop="url"]',
@@ -76,5 +82,41 @@ export class ParserService {
           fighters,
         };
       });
+  }
+
+  public sherdogFighter(data: string): {
+    list: FighterPastMatch[];
+    fighter: Fighter;
+  } {
+    const $ = load(data);
+
+    return {
+      fighter: {
+        name: $(".fighter-title [itemprop='name'] .fn").text(),
+        sherdogUrl: 'our fighter sherdogUrl',
+      },
+      list: $('.fight_history tr:not(.table_head)')
+        .toArray()
+        .map((el) => {
+          const [outcomeTd, fighterTd, eventTd, methodTd, round, time] =
+            $(el).find('td');
+
+          return {
+            outcome: $(outcomeTd).find('.final_result').text(),
+            event: {
+              date: $(eventTd).find('.sub_line').text(),
+              name: $(eventTd).find('a').text(),
+              sherdogUrl: $(eventTd).find('a').attr('href'),
+            },
+            method: $(methodTd).children().first().text(),
+            opponent: {
+              name: $(fighterTd).find('a').text(),
+              sherdogUrl: $(fighterTd).find('a').attr('href'),
+            },
+            round: +$(round).text() as Round,
+            time: $(time).text(),
+          };
+        }),
+    };
   }
 }
