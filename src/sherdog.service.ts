@@ -9,7 +9,7 @@ const sherdogEventsUrl = `${sherdogBaseUrl}organizations/Ultimate-Fighting-Champ
 export class SherdogService {
   constructor(private readonly httpService: HttpService) {}
 
-  async fetchSherdogEventsPage(): Promise<string> {
+  async events(): Promise<string> {
     const { data } = await firstValueFrom(
       this.httpService.get(sherdogEventsUrl),
     );
@@ -17,7 +17,7 @@ export class SherdogService {
     return data;
   }
 
-  async fetchSherdogUpcomingEventPage(eventPageUrl: string): Promise<string> {
+  async upcomingEvent(eventPageUrl: string): Promise<string> {
     const { data } = await firstValueFrom(
       this.httpService.get(`${sherdogBaseUrl}${eventPageUrl}`),
     );

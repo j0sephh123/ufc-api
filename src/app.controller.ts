@@ -11,28 +11,23 @@ export class AppController {
   ) {}
 
   @Get('/upcoming')
-  async getUpcomingEvent(): Promise<UpcomingEvent> {
-    const data = await this.sherdogService.fetchSherdogEventsPage();
+  async upcomingEvent(): Promise<UpcomingEvent> {
+    const data = await this.sherdogService.events();
     const parsedData = this.parserService.sherdogEvents(data);
 
     return parsedData;
   }
 
   @Get('/upcomingMatches')
-  async getUpcomingMatches(): Promise<{ matches: Match[] }> {
-    const data = await this.sherdogService.fetchSherdogEventsPage();
-    const parsedUpcomingEventUrl =
-      this.parserService.sherdogUpcomingEventUrl(data);
-
-    const sherdogUpcomingEventPage =
-      await this.sherdogService.fetchSherdogUpcomingEventPage(
-        parsedUpcomingEventUrl,
-      );
+  async upcomingMatches(): Promise<{ matches: Match[] }> {
+    const eventsHtml = await this.sherdogService.events();
+    const upcomingEventUrl = this.parserService.upcomingEventUrl(eventsHtml);
+    const upcomingEventHtml = await this.sherdogService.upcomingEvent(
+      upcomingEventUrl,
+    );
 
     return {
-      matches: this.parserService.sherdogUpcomingMatches(
-        sherdogUpcomingEventPage,
-      ),
+      matches: this.parserService.sherdogUpcomingMatches(upcomingEventHtml),
     };
   }
 }
