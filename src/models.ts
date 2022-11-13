@@ -3,6 +3,7 @@ export type UpcomingEvent = {
   date: string;
   name: string;
   location: string;
+  matches?: Match[];
 };
 
 export type Fighter = {
