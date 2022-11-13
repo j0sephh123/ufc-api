@@ -53,11 +53,8 @@ export class ParserService {
             .find('.fighter_result_data')
             .toArray()
             .map((fighter) => ({
-              sherdogUrl: $(fighter).find("[itemprop='url']").attr('href'),
-              name: $(fighter)
-                .find("[itemprop='name']")
-                .html()
-                .replace('<br>', ' '),
+              sherdogUrl: $(fighter).find(selectors.url).attr('href'),
+              name: $(fighter).find(selectors.name).html().replace('<br>', ' '),
             })) as [Fighter, Fighter];
 
           return {
