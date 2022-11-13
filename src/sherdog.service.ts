@@ -24,4 +24,12 @@ export class SherdogService {
 
     return data;
   }
+
+  async fighter(fighterPageUrl: string): Promise<string> {
+    const { data } = await firstValueFrom(
+      this.httpService.get(`${sherdogBaseUrl}fighter/${fighterPageUrl}`),
+    );
+
+    return data;
+  }
 }
