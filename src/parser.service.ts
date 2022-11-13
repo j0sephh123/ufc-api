@@ -74,7 +74,7 @@ export class ParserService {
           .toArray()
           .map((fighter) => ({
             sherdogUrl: $(fighter).find('a').attr('href'),
-            name: $(fighter).find("[itemprop='name']").text(),
+            name: $(fighter).find(selectors.name).text(),
           })) as [Fighter, Fighter];
 
         return {
@@ -92,7 +92,7 @@ export class ParserService {
 
     return {
       fighter: {
-        name: $(".fighter-title [itemprop='name'] .fn").text(),
+        name: $(`.fighter-title ${selectors.name} .fn`).text(),
         sherdogUrl: 'our fighter sherdogUrl',
       },
       list: $('.fight_history tr:not(.table_head)')
