@@ -1,4 +1,4 @@
-export type UpcomingEvent = {
+export type EventDetails = {
   sherdogUrl: string;
   date: string;
   name: string;
