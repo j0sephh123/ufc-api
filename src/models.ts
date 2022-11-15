@@ -30,3 +30,5 @@ export type FighterPastMatch = {
   round: Round;
   time: string;
 };
+
+export type FetchTimestampKey = 'events' | 'event' | 'fighter';

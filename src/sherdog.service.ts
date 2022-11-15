@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
-import { readFileSync, writeFileSync } from 'fs';
+import { FetchTimestampKey } from './models';
+import { FsService } from './fs/fs.service';
 
 const sherdogBaseUrl = 'https://www.sherdog.com/';
 const sherdogEventsUrl = `${sherdogBaseUrl}organizations/Ultimate-Fighting-Championship-UFC-2`;
@@ -9,16 +10,23 @@ const sherdogDbPath = 'db/sherdog.json';
 
 @Injectable()
 export class SherdogService {
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly fsService: FsService,
+  ) {}
+
+  private saveFetchTimestamp(path: FetchTimestampKey) {
+    const sherdogConfig = this.fsService.readFile(sherdogDbPath);
+    sherdogConfig.lastFetched[path] = new Date();
+    this.fsService.writeFile(sherdogDbPath, sherdogConfig);
+  }
 
   async events(): Promise<string> {
     const { data } = await firstValueFrom(
       this.httpService.get(sherdogEventsUrl),
     );
 
-    const sherdogConfig = JSON.parse(readFileSync(sherdogDbPath, 'utf8'));
-    sherdogConfig.lastFetched.events = new Date();
-    writeFileSync(sherdogDbPath, JSON.stringify(sherdogConfig), 'utf8');
+    this.saveFetchTimestamp('events');
 
     return data;
   }
@@ -28,9 +36,7 @@ export class SherdogService {
       this.httpService.get(`${sherdogBaseUrl}${eventPageUrl}`),
     );
 
-    const sherdogConfig = JSON.parse(readFileSync(sherdogDbPath, 'utf8'));
-    sherdogConfig.lastFetched.event = new Date();
-    writeFileSync(sherdogDbPath, JSON.stringify(sherdogConfig), 'utf8');
+    this.saveFetchTimestamp('event');
 
     return data;
   }
@@ -40,9 +46,7 @@ export class SherdogService {
       this.httpService.get(`${sherdogBaseUrl}fighter/${fighterPageUrl}`),
     );
 
-    const sherdogConfig = JSON.parse(readFileSync(sherdogDbPath, 'utf8'));
-    sherdogConfig.lastFetched.fighter = new Date();
-    writeFileSync(sherdogDbPath, JSON.stringify(sherdogConfig), 'utf8');
+    this.saveFetchTimestamp('fighter');
 
     return data;
   }
