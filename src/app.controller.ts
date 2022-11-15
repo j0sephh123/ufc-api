@@ -1,26 +1,15 @@
 import { Controller, Get } from '@nestjs/common';
-import { SherdogService } from './sherdog.service';
-import { UpcomingEvent } from './models';
-import { ParserService } from './parser.service';
+import { readFileSync } from 'fs';
 
-@Controller('api/v1/events')
+@Controller('test')
 export class AppController {
-  constructor(
-    private readonly sherdogService: SherdogService,
-    private readonly parserService: ParserService,
-  ) {}
+  @Get('/')
+  async testss() {
+    const date = new Date();
+    console.log(date);
 
-  @Get('/upcoming')
-  async upcomingEvent(): Promise<UpcomingEvent> {
-    const sherdogEventsHtml = await this.sherdogService.events();
-    const upcomingEvent = this.parserService.sherdogEvents(sherdogEventsHtml);
+    const sherdogConfig = JSON.parse(readFileSync('db/sherdog.json', 'utf8'));
 
-    const upcomingEventHtml = await this.sherdogService.upcomingEvent(
-      upcomingEvent.sherdogUrl,
-    );
-    const upcomingEventMatches =
-      this.parserService.sherdogUpcomingMatches(upcomingEventHtml);
-
-    return { ...upcomingEvent, matches: upcomingEventMatches };
+    return 'hello from /test endpoint' + sherdogConfig;
   }
 }
