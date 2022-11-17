@@ -1,9 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
-import { FsService } from './fs.service';
 
-const key = `&key=${process.env.YT_API_KEY}`;
 const videoPart = 'snippet';
 const baseURL = 'https://www.googleapis.com/youtube/v3/';
 
@@ -93,18 +91,11 @@ class YoutubeVideo implements YoutubeVideoType {
   }
 }
 
-// const youtubeApi = axios.create({
-
-// });
-
 @Injectable()
 export class YoutubeService {
   key = process.env.YT_API_KEY;
 
-  constructor(
-    private readonly httpService: HttpService,
-    private readonly fsService: FsService,
-  ) {}
+  constructor(private readonly httpService: HttpService) {}
 
   async getYoutubeVideo(id: string) {
     const url = `${baseURL}videos?id=${id}&key=${this.key}&part=${videoPart}`;
