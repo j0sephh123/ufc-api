@@ -15,36 +15,25 @@ export class EventsController {
     private readonly parserService: ParserService,
   ) {}
 
-  @Get('/upcoming')
-  async upcomingEvent(): Promise<EventDetails> {
-    const sherdogEventsHtml = await this.sherdogService.events();
-    const upcomingEvent = this.parserService.sherdogEvents(
-      sherdogEventsHtml,
-      selectors.upcomingEvent,
+  async getEventDetails(selector: string) {
+    const event = this.parserService.sherdogEvents(
+      await this.sherdogService.events(),
+      selector,
     );
 
-    const upcomingEventHtml = await this.sherdogService.upcomingEvent(
-      upcomingEvent.sherdogUrl,
-    );
+    const upcomingEventHtml = await this.sherdogService.event(event.sherdogUrl);
     const upcomingEventMatches =
       this.parserService.sherdogUpcomingMatches(upcomingEventHtml);
 
-    return { ...upcomingEvent, matches: upcomingEventMatches };
+    return { ...event, matches: upcomingEventMatches };
+  }
+
+  @Get('/upcoming')
+  async upcomingEvent(): Promise<EventDetails> {
+    return this.getEventDetails(selectors.upcomingEvent);
   }
   @Get('/recent')
   async recentEvent(): Promise<EventDetails> {
-    const sherdogEventsHtml = await this.sherdogService.events();
-    const upcomingEvent = this.parserService.sherdogEvents(
-      sherdogEventsHtml,
-      selectors.recentEvent,
-    );
-
-    const upcomingEventHtml = await this.sherdogService.upcomingEvent(
-      upcomingEvent.sherdogUrl,
-    );
-    const upcomingEventMatches =
-      this.parserService.sherdogUpcomingMatches(upcomingEventHtml);
-
-    return { ...upcomingEvent, matches: upcomingEventMatches };
+    return this.getEventDetails(selectors.recentEvent);
   }
 }

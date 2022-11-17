@@ -31,7 +31,7 @@ export class SherdogService {
     return data;
   }
 
-  async upcomingEvent(eventPageUrl: string): Promise<string> {
+  async event(eventPageUrl: string): Promise<string> {
     const { data } = await firstValueFrom(
       this.httpService.get(`${sherdogBaseUrl}${eventPageUrl}`),
     );
