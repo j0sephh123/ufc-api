@@ -1,7 +1,12 @@
 import { Controller, Get } from '@nestjs/common';
 import { SherdogService } from '../sherdog.service';
-import { UpcomingEvent } from '../models';
+import { EventDetails } from '../models';
 import { ParserService } from '../parser.service';
+
+const selectors = {
+  upcomingEvent: 'upcoming_tab',
+  recentEvent: 'recent_tab',
+};
 
 @Controller('api/v1/events')
 export class EventsController {
@@ -10,17 +15,25 @@ export class EventsController {
     private readonly parserService: ParserService,
   ) {}
 
-  @Get('/upcoming')
-  async upcomingEvent(): Promise<UpcomingEvent> {
-    const sherdogEventsHtml = await this.sherdogService.events();
-    const upcomingEvent = this.parserService.sherdogEvents(sherdogEventsHtml);
-
-    const upcomingEventHtml = await this.sherdogService.upcomingEvent(
-      upcomingEvent.sherdogUrl,
+  async getEventDetails(selector: string) {
+    const event = this.parserService.sherdogEvents(
+      await this.sherdogService.events(),
+      selector,
     );
+
+    const upcomingEventHtml = await this.sherdogService.event(event.sherdogUrl);
     const upcomingEventMatches =
       this.parserService.sherdogUpcomingMatches(upcomingEventHtml);
 
-    return { ...upcomingEvent, matches: upcomingEventMatches };
+    return { ...event, matches: upcomingEventMatches };
+  }
+
+  @Get('/upcoming')
+  async upcomingEvent(): Promise<EventDetails> {
+    return this.getEventDetails(selectors.upcomingEvent);
+  }
+  @Get('/recent')
+  async recentEvent(): Promise<EventDetails> {
+    return this.getEventDetails(selectors.recentEvent);
   }
 }

@@ -5,7 +5,7 @@ import {
   FighterPastMatch,
   Match,
   Round,
-  UpcomingEvent,
+  EventDetails,
 } from './models';
 
 const selectors = {
@@ -19,9 +19,10 @@ const selectors = {
 
 @Injectable()
 export class ParserService {
-  public sherdogEvents(data: string): UpcomingEvent {
+  public sherdogEvents(data: string, selector: string): EventDetails {
     const $ = load(data);
-    const [upcomingEvent] = $(`#upcoming_tab ${selectors.event}`);
+    // recent_tab
+    const [upcomingEvent] = $(`#${selector} ${selectors.event}`);
 
     const date = $(upcomingEvent)
       .find(selectors.startDate)
