@@ -1,3 +1,3 @@
 # Summary
-Something related to UFC - still dunno what yet
 
+The purpose of this is only to fetch Youtube API and scrap stuff from Sherdog.
