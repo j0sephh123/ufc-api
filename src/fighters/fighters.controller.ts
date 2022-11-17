@@ -1,6 +1,6 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { ParserService } from 'src/parser.service';
-import { SherdogService } from 'src/sherdog.service';
+import { ParserService } from 'src/services/parser.service';
+import { SherdogService } from 'src/services/sherdog.service';
 
 @Controller('api/v1/fighters')
 export class FightersController {

@@ -1,14 +1,19 @@
 import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
-import { SherdogService } from './sherdog.service';
-import { ParserService } from './parser.service';
+import { ConfigModule } from '@nestjs/config';
+
 import { EventsController } from './events/events.controller';
 import { FightersController } from './fighters/fighters.controller';
-import { FsService } from './fs/fs.service';
+
+import { SherdogService } from './services/sherdog.service';
+import { ParserService } from './services/parser.service';
+import { FsService } from './services/fs.service';
+import { YoutubeService } from './services/youtube.service';
+import { YoutubeController } from './youtube/youtube.controller';
 
 @Module({
-  imports: [HttpModule],
-  controllers: [EventsController, FightersController],
-  providers: [SherdogService, ParserService, FsService],
+  imports: [ConfigModule.forRoot(), HttpModule],
+  controllers: [EventsController, FightersController, YoutubeController],
+  providers: [SherdogService, ParserService, FsService, YoutubeService],
 })
 export class AppModule {}

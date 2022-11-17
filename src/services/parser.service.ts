@@ -6,7 +6,7 @@ import {
   Match,
   Round,
   EventDetails,
-} from './models';
+} from '../models';
 
 const selectors = {
   url: '[itemprop="url"]',
