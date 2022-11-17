@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
-import { FetchTimestampKey } from './models';
-import { FsService } from './fs/fs.service';
+import { FetchTimestampKey } from '../models';
+import { FsService } from './fs.service';
 
 const sherdogBaseUrl = 'https://www.sherdog.com/';
 const sherdogEventsUrl = `${sherdogBaseUrl}organizations/Ultimate-Fighting-Championship-UFC-2`;

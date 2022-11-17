@@ -1,7 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
-import { SherdogService } from '../sherdog.service';
+import { SherdogService } from '../services/sherdog.service';
 import { EventDetails } from '../models';
-import { ParserService } from '../parser.service';
+import { ParserService } from '../services/parser.service';
 
 const selectors = {
   upcomingEvent: 'upcoming_tab',
