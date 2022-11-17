@@ -2,7 +2,6 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
 
-const key = `&key=${process.env.YT_API_KEY}`;
 const videoPart = 'snippet';
 const baseURL = 'https://www.googleapis.com/youtube/v3/';
 
@@ -91,10 +90,6 @@ class YoutubeVideo implements YoutubeVideoType {
     this.ytChannelId = channelId;
   }
 }
-
-// const youtubeApi = axios.create({
-
-// });
 
 @Injectable()
 export class YoutubeService {

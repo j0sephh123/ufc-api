@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
-import { FetchTimestampKey } from '../models';
 import { FsService } from './fs.service';
 
 const sherdogBaseUrl = 'https://www.sherdog.com/';
@@ -15,18 +14,12 @@ export class SherdogService {
     private readonly fsService: FsService,
   ) {}
 
-  private saveFetchTimestamp(path: FetchTimestampKey) {
-    const sherdogConfig = this.fsService.readFile(sherdogDbPath);
-    sherdogConfig.lastFetched[path] = new Date();
-    this.fsService.writeFile(sherdogDbPath, sherdogConfig);
-  }
-
   async events(): Promise<string> {
     const { data } = await firstValueFrom(
       this.httpService.get(sherdogEventsUrl),
     );
 
-    this.saveFetchTimestamp('events');
+    this.fsService.saveFetchTimestamp('sherdog.events');
 
     return data;
   }
@@ -36,7 +29,7 @@ export class SherdogService {
       this.httpService.get(`${sherdogBaseUrl}${eventPageUrl}`),
     );
 
-    this.saveFetchTimestamp('event');
+    this.fsService.saveFetchTimestamp('sherdog.event');
 
     return data;
   }
@@ -46,7 +39,7 @@ export class SherdogService {
       this.httpService.get(`${sherdogBaseUrl}fighter/${fighterPageUrl}`),
     );
 
-    this.saveFetchTimestamp('fighter');
+    this.fsService.saveFetchTimestamp('sherdog.fighter');
 
     return data;
   }
