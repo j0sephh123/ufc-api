@@ -1,6 +1,7 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { firstValueFrom } from 'rxjs';
+import { FsService } from './fs.service';
 
 const key = `&key=${process.env.YT_API_KEY}`;
 const videoPart = 'snippet';
@@ -100,7 +101,10 @@ class YoutubeVideo implements YoutubeVideoType {
 export class YoutubeService {
   key = process.env.YT_API_KEY;
 
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly fsService: FsService,
+  ) {}
 
   async getYoutubeVideo(id: string) {
     const url = `${baseURL}videos?id=${id}&key=${this.key}&part=${videoPart}`;
