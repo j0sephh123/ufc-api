@@ -21,6 +21,20 @@ const selectors = {
 
 @Injectable()
 export class ParserService {
+  private ufcRankings(data: string) {
+    const $ = load(data);
+    const divisions = $('.views-table').toArray().slice(0, -1);
+
+    return divisions.map((division) => ({
+      label: $(division).find('h4').text(),
+      topFighter: $(division).find('h5 a').text(),
+      fighters: $(division)
+        .find('.views-field-title')
+        .toArray()
+        .map((fighterEl) => $(fighterEl).find('a').text()),
+    }));
+  }
+
   sherdogEvents(data: string, selector: string): EventDetails {
     const $ = load(data);
     const [event] = $(`#${selector} ${selectors.sherdog.event}`);
@@ -115,17 +129,5 @@ export class ParserService {
     };
   }
 
-  ufcRankings(data: string) {
-    const $ = load(data);
-    const divisions = $('.views-table').toArray().slice(0, -1);
-
-    return divisions.map((division) => ({
-      label: $(division).find('h4').text(),
-      topFighter: $(division).find('h5 a').text(),
-      fighters: $(division)
-        .find('.views-field-title')
-        .toArray()
-        .map((fighterEl) => $(fighterEl).find('a').text()),
-    }));
-  }
+  rankings = (data: string) => this.ufcRankings(data);
 }

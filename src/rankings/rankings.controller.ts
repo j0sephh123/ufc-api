@@ -24,7 +24,7 @@ export class RankingsController {
     }
 
     const rankingsHtml = await this.ufc.rankings();
-    const response = this.parser.ufcRankings(rankingsHtml);
+    const response = this.parser.rankings(rankingsHtml);
 
     cache.saveJson(response);
     return response;
