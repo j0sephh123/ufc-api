@@ -12,9 +12,9 @@ export class EventsService {
 
   async getEventDetails(selector: EventSelectors) {
     const eventsHtml = await this.sherdogService.events();
-    const event = this.parserService.sherdogEvents(eventsHtml, selector);
+    const event = this.parserService.events(eventsHtml, selector);
     const eventHtml = await this.sherdogService.event(event.sherdogUrl);
-    const eventMatches = this.parserService.sherdogUpcomingMatches(eventHtml);
+    const eventMatches = this.parserService.upcomingMatches(eventHtml);
 
     return { ...event, matches: eventMatches };
   }

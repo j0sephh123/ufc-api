@@ -23,7 +23,7 @@ export class FightersController {
     }
 
     const fightersHtml = await this.sherdogService.fighter(sherdogUrl);
-    const response = this.parserService.sherdogFighter(fightersHtml);
+    const response = this.parserService.fighter(fightersHtml);
     response.fighter.sherdogUrl = sherdogUrl;
 
     cache.saveJson(response);
