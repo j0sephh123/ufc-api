@@ -18,15 +18,15 @@ export class FightersController {
     const cacheResult = cache.get() as FighterResponse | null;
     cache.saveTimestamp();
 
-    if (!cacheResult) {
-      const fightersHtml = await this.sherdogService.fighter(sherdogUrl);
-      const response = this.parserService.sherdogFighter(fightersHtml);
-      response.fighter.sherdogUrl = sherdogUrl;
-
-      cache.saveJson(response);
-      return response;
+    if (cacheResult) {
+      return cacheResult;
     }
 
-    return cacheResult;
+    const fightersHtml = await this.sherdogService.fighter(sherdogUrl);
+    const response = this.parserService.sherdogFighter(fightersHtml);
+    response.fighter.sherdogUrl = sherdogUrl;
+
+    cache.saveJson(response);
+    return response;
   }
 }

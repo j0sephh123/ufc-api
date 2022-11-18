@@ -1,12 +1,14 @@
 import { Controller, Get, Param } from '@nestjs/common';
-import { EventDetails, ResourceKey } from '../models';
+import { EventDetails, LastFetchedStaticKey } from '../models';
 import { CacheService } from 'src/services/cache.service';
 import { EventsService } from './events.service';
 
 export type EventType = 'upcoming' | 'recent';
 export type EventSelectors = 'upcoming_tab' | 'recent_tab';
 
-const mapEventType = <Record<EventType, [ResourceKey, EventSelectors]>>{
+const mapEventType = <
+  Record<EventType, [LastFetchedStaticKey, EventSelectors]>
+>{
   recent: ['sherdog.recentEvent', 'recent_tab'],
   upcoming: ['sherdog.upcomingEvent', 'upcoming_tab'],
 };
@@ -25,12 +27,12 @@ export class EventsController {
     const cacheResult = cache.get() as EventDetails | null;
     cache.saveTimestamp();
 
-    if (!cacheResult) {
-      const result = await this.eventsService.getEventDetails(selector);
-      cache.saveJson(result);
-      return result;
+    if (cacheResult) {
+      return cacheResult;
     }
 
-    return cacheResult;
+    const result = await this.eventsService.getEventDetails(selector);
+    cache.saveJson(result);
+    return result;
   }
 }
