@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { load } from 'cheerio';
 import {
   Fighter,
-  FighterPastMatch,
   Match,
   Round,
   EventDetails,
@@ -10,28 +9,29 @@ import {
 } from '../models';
 
 const selectors = {
-  url: '[itemprop="url"]',
-  name: '[itemprop="name"]',
-  startDate: '[itemprop="startDate"]',
-  location: '[itemprop="location"]',
-  subEvent: '[itemprop="subEvent"]',
-  event: '[itemtype="http://schema.org/Event"]',
+  sherdog: {
+    url: '[itemprop="url"]',
+    name: '[itemprop="name"]',
+    startDate: '[itemprop="startDate"]',
+    location: '[itemprop="location"]',
+    subEvent: '[itemprop="subEvent"]',
+    event: '[itemtype="http://schema.org/Event"]',
+  },
 };
 
 @Injectable()
 export class ParserService {
-  public sherdogEvents(data: string, selector: string): EventDetails {
+  sherdogEvents(data: string, selector: string): EventDetails {
     const $ = load(data);
-    // recent_tab
-    const [upcomingEvent] = $(`#${selector} ${selectors.event}`);
+    const [event] = $(`#${selector} ${selectors.sherdog.event}`);
 
-    const date = $(upcomingEvent)
-      .find(selectors.startDate)
+    const date = $(event)
+      .find(selectors.sherdog.startDate)
       .attr('content')
       .slice(0, 10);
-    const sherdogUrl = $(upcomingEvent).find(selectors.url).attr('href');
-    const name = $(upcomingEvent).find(selectors.name).text().trim();
-    const location = $(upcomingEvent).find(selectors.location).text().trim();
+    const sherdogUrl = $(event).find(selectors.sherdog.url).attr('href');
+    const name = $(event).find(selectors.sherdog.name).text().trim();
+    const location = $(event).find(selectors.sherdog.location).text().trim();
 
     return {
       date,
@@ -41,17 +41,10 @@ export class ParserService {
     };
   }
 
-  public upcomingEventUrl(data: string) {
-    const $ = load(data);
-    const [upcomingEvent] = $(`#upcoming_tab ${selectors.event}`);
-
-    return $(upcomingEvent).find(selectors.url).attr('href');
-  }
-
-  public sherdogUpcomingMatches(data: string): Match[] {
+  sherdogUpcomingMatches(data: string): Match[] {
     const $ = load(data);
 
-    return $(selectors.subEvent)
+    return $(selectors.sherdog.subEvent)
       .toArray()
       .map((event, index) => {
         const category = $(event).find('.weight_class').text();
@@ -61,8 +54,11 @@ export class ParserService {
             .find('.fighter_result_data')
             .toArray()
             .map((fighter) => ({
-              sherdogUrl: $(fighter).find(selectors.url).attr('href'),
-              name: $(fighter).find(selectors.name).html().replace('<br>', ' '),
+              sherdogUrl: $(fighter).find(selectors.sherdog.url).attr('href'),
+              name: $(fighter)
+                .find(selectors.sherdog.name)
+                .html()
+                .replace('<br>', ' '),
             })) as [Fighter, Fighter];
 
           return {
@@ -86,7 +82,7 @@ export class ParserService {
       });
   }
 
-  public sherdogFighter(data: string): FighterResponse {
+  sherdogFighter(data: string): FighterResponse {
     const $ = load(data);
 
     return {
@@ -117,5 +113,19 @@ export class ParserService {
           };
         }),
     };
+  }
+
+  ufcRankings(data: string) {
+    const $ = load(data);
+    const divisions = $('.views-table').toArray().slice(0, -1);
+
+    return divisions.map((division) => ({
+      label: $(division).find('h4').text(),
+      topFighter: $(division).find('h5 a').text(),
+      fighters: $(division)
+        .find('.views-field-title')
+        .toArray()
+        .map((fighterEl) => $(fighterEl).find('a').text()),
+    }));
   }
 }

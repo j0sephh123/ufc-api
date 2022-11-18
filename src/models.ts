@@ -35,4 +35,7 @@ export type FighterResponse = {
   fighter: Fighter;
 };
 
-export type ResourceKey = 'sherdog.upcomingEvent' | 'sherdog.recentEvent';
+export type LastFetchedStaticKey =
+  | 'sherdog.upcomingEvent'
+  | 'sherdog.recentEvent'
+  | 'ufc.rankings';
