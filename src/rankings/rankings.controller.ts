@@ -4,22 +4,6 @@ import { CacheService } from 'src/services/cache.service';
 import { ParserService } from 'src/services/parser.service';
 import { UfcService } from 'src/services/ufc.service';
 
-const map = [
-  'men.p4p',
-  'men.fly',
-  'men.bantam',
-  'men.feather',
-  'men.light',
-  'men.welther',
-  'men.middle',
-  'men.lightheavy',
-  'men.heavy',
-  'women.p4p',
-  'women.straw',
-  'women.fly',
-  'women.bantam',
-];
-
 @Controller('api/v1/rankings')
 export class RankingsController {
   constructor(
