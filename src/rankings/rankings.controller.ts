@@ -3,8 +3,9 @@ import { LastFetchedStaticKey } from 'src/models';
 import { ApiService } from 'src/services/api.service';
 import { CacheService } from 'src/services/cache.service';
 import { ParserService } from 'src/services/parser.service';
+import { generateEndpoint } from 'src/utils/routing';
 
-@Controller('api/v1/rankings')
+@Controller(generateEndpoint('rankings'))
 export class RankingsController {
   constructor(
     private readonly api: ApiService,

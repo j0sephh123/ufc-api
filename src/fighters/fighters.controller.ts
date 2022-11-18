@@ -3,8 +3,9 @@ import { FighterResponse } from 'src/models';
 import { ApiService } from 'src/services/api.service';
 import { CacheService } from 'src/services/cache.service';
 import { ParserService } from 'src/services/parser.service';
+import { generateEndpoint } from 'src/utils/routing';
 
-@Controller('api/v1/fighters')
+@Controller(generateEndpoint('fighters'))
 export class FightersController {
   constructor(
     private readonly apiService: ApiService,

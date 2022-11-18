@@ -39,3 +39,5 @@ export type LastFetchedStaticKey =
   | 'sherdog.upcomingEvent'
   | 'sherdog.recentEvent'
   | 'ufc.rankings';
+
+export type Endpoint = 'events' | 'fighters' | 'rankings' | 'youtube';

@@ -2,6 +2,7 @@ import { Controller, Get, Param } from '@nestjs/common';
 import { EventDetails, LastFetchedStaticKey } from '../models';
 import { CacheService } from 'src/services/cache.service';
 import { EventsService } from './events.service';
+import { generateEndpoint } from 'src/utils/routing';
 
 export type EventType = 'upcoming' | 'recent';
 export type EventSelectors = 'upcoming_tab' | 'recent_tab';
@@ -13,7 +14,7 @@ const mapEventType = <
   upcoming: ['sherdog.upcomingEvent', 'upcoming_tab'],
 };
 
-@Controller('api/v1/events')
+@Controller(generateEndpoint('events'))
 export class EventsController {
   constructor(
     private readonly cacheService: CacheService,
