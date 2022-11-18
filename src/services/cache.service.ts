@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { ResourceKey } from 'src/models';
 import { FsService } from './fs.service';
 import { differenceInHours } from 'date-fns';
 
@@ -8,15 +7,15 @@ const hoursDiffToInvalidateCache = 6;
 
 @Injectable()
 export class CacheService {
-  resourceKey: ResourceKey;
+  resourceKey: string;
 
   constructor(private readonly fs: FsService) {}
 
-  private generatePath(resourceKey: ResourceKey) {
+  private generatePath(resourceKey: string) {
     return `db/cache/${resourceKey}.json`;
   }
 
-  private getLastFetched(resourceKey: ResourceKey) {
+  private getLastFetched(resourceKey: string) {
     return new Date(this.fs.readFile(lastFetchedPath)[resourceKey]);
   }
 
@@ -31,7 +30,7 @@ export class CacheService {
     return this.fs.readFile(path);
   }
 
-  init(resourceKey: ResourceKey) {
+  init(resourceKey: string) {
     this.resourceKey = resourceKey;
 
     return this;

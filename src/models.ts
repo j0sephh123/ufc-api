@@ -30,5 +30,9 @@ export type FighterPastMatch = {
   round: Round;
   time: string;
 };
+export type FighterResponse = {
+  list: FighterPastMatch[];
+  fighter: Fighter;
+};
 
 export type ResourceKey = 'sherdog.upcomingEvent' | 'sherdog.recentEvent';

@@ -6,6 +6,7 @@ import {
   Match,
   Round,
   EventDetails,
+  FighterResponse,
 } from '../models';
 
 const selectors = {
@@ -85,10 +86,7 @@ export class ParserService {
       });
   }
 
-  public sherdogFighter(data: string): {
-    list: FighterPastMatch[];
-    fighter: Fighter;
-  } {
+  public sherdogFighter(data: string): FighterResponse {
     const $ = load(data);
 
     return {
