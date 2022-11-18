@@ -10,10 +10,12 @@ import { ParserService } from './services/parser.service';
 import { FsService } from './services/fs.service';
 import { YoutubeService } from './services/youtube.service';
 import { YoutubeController } from './youtube/youtube.controller';
+import { CacheService } from './services/cache.service';
+import { EventsService } from './events/events.service';
 
 @Module({
   imports: [ConfigModule.forRoot(), HttpModule],
   controllers: [EventsController, FightersController, YoutubeController],
-  providers: [SherdogService, ParserService, FsService, YoutubeService],
+  providers: [SherdogService, ParserService, FsService, YoutubeService, CacheService, EventsService],
 })
 export class AppModule {}

@@ -31,7 +31,7 @@ export type FighterPastMatch = {
   time: string;
 };
 
-export type FetchTimestampKey =
-  | 'sherdog.events'
-  | 'sherdog.event'
+export type ResourceKey =
+  | 'sherdog.upcomingEvent'
+  | 'sherdog.recentEvent'
   | 'sherdog.fighter';
