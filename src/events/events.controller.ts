@@ -1,39 +1,35 @@
-import { Controller, Get } from '@nestjs/common';
-import { SherdogService } from '../services/sherdog.service';
-import { EventDetails } from '../models';
-import { ParserService } from '../services/parser.service';
+import { Controller, Get, Param } from '@nestjs/common';
+import { EventDetails, ResourceKey } from '../models';
+import { CacheService } from 'src/services/cache.service';
+import { EventsService } from './events.service';
 
-const selectors = {
-  upcomingEvent: 'upcoming_tab',
-  recentEvent: 'recent_tab',
+export type EventType = 'upcoming' | 'recent';
+export type EventSelectors = 'upcoming_tab' | 'recent_tab';
+
+const mapEventType = <Record<EventType, [ResourceKey, EventSelectors]>>{
+  recent: ['sherdog.recentEvent', 'recent_tab'],
+  upcoming: ['sherdog.upcomingEvent', 'upcoming_tab'],
 };
 
 @Controller('api/v1/events')
 export class EventsController {
   constructor(
-    private readonly sherdogService: SherdogService,
-    private readonly parserService: ParserService,
+    private readonly cache: CacheService,
+    private readonly eventsService: EventsService,
   ) {}
 
-  async getEventDetails(selector: string) {
-    const event = this.parserService.sherdogEvents(
-      await this.sherdogService.events(),
-      selector,
-    );
+  @Get(':type')
+  async single(@Param('type') type: EventType): Promise<EventDetails> {
+    const [resourceKey, selector] = mapEventType[type];
+    const cacheResult = this.cache.get(resourceKey) as EventDetails | null;
+    this.cache.saveTimestamp(resourceKey);
 
-    const upcomingEventHtml = await this.sherdogService.event(event.sherdogUrl);
-    const upcomingEventMatches =
-      this.parserService.sherdogUpcomingMatches(upcomingEventHtml);
+    if (!cacheResult) {
+      const result = await this.eventsService.getEventDetails(selector);
+      this.cache.saveJson(resourceKey, result);
+      return result;
+    }
 
-    return { ...event, matches: upcomingEventMatches };
-  }
-
-  @Get('/upcoming')
-  async upcomingEvent(): Promise<EventDetails> {
-    return this.getEventDetails(selectors.upcomingEvent);
-  }
-  @Get('/recent')
-  async recentEvent(): Promise<EventDetails> {
-    return this.getEventDetails(selectors.recentEvent);
+    return cacheResult;
   }
 }
