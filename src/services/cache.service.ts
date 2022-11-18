@@ -8,6 +8,8 @@ const hoursDiffToInvalidateCache = 6;
 
 @Injectable()
 export class CacheService {
+  resourceKey: ResourceKey;
+
   constructor(private readonly fs: FsService) {}
 
   private generatePath(resourceKey: ResourceKey) {
@@ -29,26 +31,32 @@ export class CacheService {
     return this.fs.readFile(path);
   }
 
-  saveTimestamp(resourceKey: ResourceKey) {
+  init(resourceKey: ResourceKey) {
+    this.resourceKey = resourceKey;
+
+    return this;
+  }
+
+  saveTimestamp() {
     const sherdogConfig = this.fs.readFile(lastFetchedPath);
-    sherdogConfig[resourceKey] = new Date();
+    sherdogConfig[this.resourceKey] = new Date();
     this.fs.writeFile(lastFetchedPath, sherdogConfig);
   }
 
-  saveJson(resourceKey: ResourceKey, json: any) {
-    const path = this.generatePath(resourceKey);
+  saveJson(json: any) {
+    const path = this.generatePath(this.resourceKey);
     this.fs.writeFile(path, json);
   }
 
-  get(resourceKey: ResourceKey) {
-    const path = this.generatePath(resourceKey);
+  get() {
+    const path = this.generatePath(this.resourceKey);
     const exists = this.fs.fileExists(path);
 
     if (!exists) {
       return null;
     }
 
-    const lastFetchedDate = this.getLastFetched(resourceKey);
+    const lastFetchedDate = this.getLastFetched(this.resourceKey);
     const shouldReadFromCache = this.shouldReadFromCache(lastFetchedDate);
 
     if (!shouldReadFromCache) {

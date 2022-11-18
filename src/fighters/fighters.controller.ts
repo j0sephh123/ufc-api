@@ -12,10 +12,14 @@ export class FightersController {
   @Get(':sherdogUrl')
   async single(@Param('sherdogUrl') sherdogUrl: string) {
     const fightersHtml = await this.sherdogService.fighter(sherdogUrl);
-
     const response = this.parserService.sherdogFighter(fightersHtml);
-    response.fighter.sherdogUrl = sherdogUrl;
 
-    return response;
+    return {
+      ...response,
+      fighter: {
+        ...response.fighter,
+        sherdogUrl,
+      },
+    };
   }
 }

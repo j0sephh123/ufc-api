@@ -14,19 +14,20 @@ const mapEventType = <Record<EventType, [ResourceKey, EventSelectors]>>{
 @Controller('api/v1/events')
 export class EventsController {
   constructor(
-    private readonly cache: CacheService,
+    private readonly cacheService: CacheService,
     private readonly eventsService: EventsService,
   ) {}
 
   @Get(':type')
   async single(@Param('type') type: EventType): Promise<EventDetails> {
     const [resourceKey, selector] = mapEventType[type];
-    const cacheResult = this.cache.get(resourceKey) as EventDetails | null;
-    this.cache.saveTimestamp(resourceKey);
+    const cache = this.cacheService.init(resourceKey);
+    const cacheResult = cache.get() as EventDetails | null;
+    cache.saveTimestamp();
 
     if (!cacheResult) {
       const result = await this.eventsService.getEventDetails(selector);
-      this.cache.saveJson(resourceKey, result);
+      cache.saveJson(result);
       return result;
     }
 
