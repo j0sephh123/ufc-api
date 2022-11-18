@@ -34,8 +34,6 @@ export class SherdogService {
       this.httpService.get(`${sherdogBaseUrl}fighter/${fighterPageUrl}`),
     );
 
-    this.cache.saveTimestamp('sherdog.fighter');
-
     return data;
   }
 }
