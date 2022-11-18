@@ -14,10 +14,25 @@ import { CacheService } from './services/cache.service';
 import { EventsService } from './events/events.service';
 import { RankingsController } from './rankings/rankings.controller';
 import { UfcService } from './services/ufc.service';
+import { ApiService } from './services/api.service';
 
 @Module({
   imports: [ConfigModule.forRoot(), HttpModule],
-  controllers: [EventsController, FightersController, YoutubeController, RankingsController],
-  providers: [SherdogService, ParserService, FsService, YoutubeService, CacheService, EventsService, UfcService],
+  controllers: [
+    EventsController,
+    FightersController,
+    YoutubeController,
+    RankingsController,
+  ],
+  providers: [
+    SherdogService,
+    ParserService,
+    FsService,
+    YoutubeService,
+    CacheService,
+    EventsService,
+    UfcService,
+    ApiService,
+  ],
 })
 export class AppModule {}
