@@ -3,12 +3,8 @@ import { ResourceKey } from 'src/models';
 import { FsService } from './fs.service';
 import { differenceInHours } from 'date-fns';
 
-const date = new Date('2022-11-18T04:37:01.704Z');
-const result = differenceInHours(new Date(), date);
-
-console.log(result);
-
 const lastFetchedPath = 'db/lastFetched.json';
+const hoursDiffToInvalidateCache = 6;
 
 @Injectable()
 export class CacheService {
@@ -23,9 +19,10 @@ export class CacheService {
   }
 
   private shouldReadFromCache(lastFetchedDate: Date) {
-    const diff = differenceInHours(new Date(), lastFetchedDate);
-    console.log({ diff });
-    return diff < 6;
+    return (
+      differenceInHours(new Date(), lastFetchedDate) <
+      hoursDiffToInvalidateCache
+    );
   }
 
   private readFromCache(path: string) {
@@ -53,7 +50,6 @@ export class CacheService {
 
     const lastFetchedDate = this.getLastFetched(resourceKey);
     const shouldReadFromCache = this.shouldReadFromCache(lastFetchedDate);
-    console.log({ shouldReadFromCache });
 
     if (!shouldReadFromCache) {
       return null;
