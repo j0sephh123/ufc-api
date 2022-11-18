@@ -3,6 +3,7 @@ import { LastFetchedStaticKey } from 'src/models';
 import { ApiService } from 'src/services/api.service';
 import { CacheService } from 'src/services/cache.service';
 import { ParserService } from 'src/services/parser.service';
+import { generateHoursFromDays } from 'src/utils/generate';
 import { generateEndpoint } from 'src/utils/routing';
 
 @Controller(generateEndpoint('rankings'))
@@ -16,7 +17,7 @@ export class RankingsController {
   @Get('/')
   async get() {
     const key: LastFetchedStaticKey = 'ufc.rankings';
-    const cache = this.cacheService.init(key);
+    const cache = this.cacheService.init(key, generateHoursFromDays(5));
     const cacheResult = cache.get();
     cache.saveTimestamp();
 
