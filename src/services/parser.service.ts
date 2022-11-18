@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { load } from 'cheerio';
 import {
   Fighter,
-  FighterPastMatch,
   Match,
   Round,
   EventDetails,
@@ -10,28 +9,29 @@ import {
 } from '../models';
 
 const selectors = {
-  url: '[itemprop="url"]',
-  name: '[itemprop="name"]',
-  startDate: '[itemprop="startDate"]',
-  location: '[itemprop="location"]',
-  subEvent: '[itemprop="subEvent"]',
-  event: '[itemtype="http://schema.org/Event"]',
+  sherdog: {
+    url: '[itemprop="url"]',
+    name: '[itemprop="name"]',
+    startDate: '[itemprop="startDate"]',
+    location: '[itemprop="location"]',
+    subEvent: '[itemprop="subEvent"]',
+    event: '[itemtype="http://schema.org/Event"]',
+  },
 };
 
 @Injectable()
 export class ParserService {
   sherdogEvents(data: string, selector: string): EventDetails {
     const $ = load(data);
-    // recent_tab
-    const [event] = $(`#${selector} ${selectors.event}`);
+    const [event] = $(`#${selector} ${selectors.sherdog.event}`);
 
     const date = $(event)
-      .find(selectors.startDate)
+      .find(selectors.sherdog.startDate)
       .attr('content')
       .slice(0, 10);
-    const sherdogUrl = $(event).find(selectors.url).attr('href');
-    const name = $(event).find(selectors.name).text().trim();
-    const location = $(event).find(selectors.location).text().trim();
+    const sherdogUrl = $(event).find(selectors.sherdog.url).attr('href');
+    const name = $(event).find(selectors.sherdog.name).text().trim();
+    const location = $(event).find(selectors.sherdog.location).text().trim();
 
     return {
       date,
@@ -41,17 +41,10 @@ export class ParserService {
     };
   }
 
-  upcomingEventUrl(data: string) {
-    const $ = load(data);
-    const [upcomingEvent] = $(`#upcoming_tab ${selectors.event}`);
-
-    return $(upcomingEvent).find(selectors.url).attr('href');
-  }
-
   sherdogUpcomingMatches(data: string): Match[] {
     const $ = load(data);
 
-    return $(selectors.subEvent)
+    return $(selectors.sherdog.subEvent)
       .toArray()
       .map((event, index) => {
         const category = $(event).find('.weight_class').text();
@@ -61,8 +54,11 @@ export class ParserService {
             .find('.fighter_result_data')
             .toArray()
             .map((fighter) => ({
-              sherdogUrl: $(fighter).find(selectors.url).attr('href'),
-              name: $(fighter).find(selectors.name).html().replace('<br>', ' '),
+              sherdogUrl: $(fighter).find(selectors.sherdog.url).attr('href'),
+              name: $(fighter)
+                .find(selectors.sherdog.name)
+                .html()
+                .replace('<br>', ' '),
             })) as [Fighter, Fighter];
 
           return {
