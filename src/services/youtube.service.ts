@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { FetcherService } from './fetcher.service';
 
 const videoPart = 'snippet';
@@ -92,11 +92,14 @@ class YoutubeVideo implements YoutubeVideoType {
 
 @Injectable()
 export class YoutubeService {
+  private readonly logger = new Logger(YoutubeService.name);
   key = process.env.YT_API_KEY;
 
   constructor(private readonly fetcher: FetcherService) {}
 
   async getYoutubeVideo(id: string) {
+    this.logger.debug('Fetching youtube video...');
+
     const url = `${baseURL}videos?id=${id}&key=${this.key}&part=${videoPart}`;
     const data = await this.fetcher.fetch(url);
     const rawVideo: VideoRawResponse = data.items[0];
