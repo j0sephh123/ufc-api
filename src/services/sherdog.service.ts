@@ -1,35 +1,18 @@
 import { Injectable } from '@nestjs/common';
-import { HttpService } from '@nestjs/axios';
-import { firstValueFrom } from 'rxjs';
+import { FetcherService } from './fetcher.service';
 
 const sherdogBaseUrl = 'https://www.sherdog.com/';
 const sherdogEventsUrl = `${sherdogBaseUrl}organizations/Ultimate-Fighting-Championship-UFC-2`;
 
 @Injectable()
 export class SherdogService {
-  constructor(private readonly httpService: HttpService) {}
+  constructor(private readonly fetcher: FetcherService) {}
 
-  async events(): Promise<string> {
-    const { data } = await firstValueFrom(
-      this.httpService.get(sherdogEventsUrl),
-    );
+  events = (): Promise<string> => this.fetcher.fetch(sherdogEventsUrl);
 
-    return data;
-  }
+  event = (eventPageUrl: string): Promise<string> =>
+    this.fetcher.fetch(`${sherdogBaseUrl}${eventPageUrl}`);
 
-  async event(eventPageUrl: string): Promise<string> {
-    const { data } = await firstValueFrom(
-      this.httpService.get(`${sherdogBaseUrl}${eventPageUrl}`),
-    );
-
-    return data;
-  }
-
-  async fighter(fighterPageUrl: string): Promise<string> {
-    const { data } = await firstValueFrom(
-      this.httpService.get(`${sherdogBaseUrl}fighter/${fighterPageUrl}`),
-    );
-
-    return data;
-  }
+  fighter = (fighterPageUrl: string): Promise<string> =>
+    this.fetcher.fetch(`${sherdogBaseUrl}fighter/${fighterPageUrl}`);
 }

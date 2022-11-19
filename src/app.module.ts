@@ -15,6 +15,7 @@ import { EventsService } from './events/events.service';
 import { RankingsController } from './rankings/rankings.controller';
 import { UfcService } from './services/ufc.service';
 import { ApiService } from './services/api.service';
+import { FetcherService } from './services/fetcher.service';
 
 @Module({
   imports: [ConfigModule.forRoot(), HttpModule],
@@ -33,6 +34,7 @@ import { ApiService } from './services/api.service';
     EventsService,
     UfcService,
     ApiService,
+    FetcherService,
   ],
 })
 export class AppModule {}

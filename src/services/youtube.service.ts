@@ -1,6 +1,5 @@
-import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
-import { firstValueFrom } from 'rxjs';
+import { FetcherService } from './fetcher.service';
 
 const videoPart = 'snippet';
 const baseURL = 'https://www.googleapis.com/youtube/v3/';
@@ -95,12 +94,13 @@ class YoutubeVideo implements YoutubeVideoType {
 export class YoutubeService {
   key = process.env.YT_API_KEY;
 
-  constructor(private readonly httpService: HttpService) {}
+  constructor(private readonly fetcher: FetcherService) {}
 
   async getYoutubeVideo(id: string) {
     const url = `${baseURL}videos?id=${id}&key=${this.key}&part=${videoPart}`;
-    const result = await firstValueFrom(this.httpService.get(url));
-    const rawVideo: VideoRawResponse = result.data.items[0];
+
+    const data = await this.fetcher.fetch(url);
+    const rawVideo: VideoRawResponse = data.items[0];
 
     return new YoutubeVideo(
       id,

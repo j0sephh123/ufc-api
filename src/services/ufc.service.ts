@@ -1,16 +1,13 @@
-import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
-import { firstValueFrom } from 'rxjs';
+import { FetcherService } from './fetcher.service';
 
 const rankingsUrl = 'https://www.ufc.com/rankings';
 
 @Injectable()
 export class UfcService {
-  constructor(private readonly httpService: HttpService) {}
+  constructor(private readonly fetcher: FetcherService) {}
 
   async rankings(): Promise<string> {
-    const { data } = await firstValueFrom(this.httpService.get(rankingsUrl));
-
-    return data;
+    return this.fetcher.fetch(rankingsUrl);
   }
 }

@@ -21,10 +21,11 @@ export class CacheService {
   }
 
   private shouldReadFromCache(lastFetchedDate: Date) {
-    return (
+    const diff =
       differenceInHours(new Date(), lastFetchedDate) <
-      this.hoursDiffToInvalidateCache
-    );
+      this.hoursDiffToInvalidateCache;
+
+    return diff;
   }
 
   private readFromCache(path: string) {
@@ -33,7 +34,7 @@ export class CacheService {
 
   init(path: string, hoursDiffToInvalidateCache?: number) {
     this.path = path;
-    if (hoursDiffToInvalidateCache) {
+    if (hoursDiffToInvalidateCache !== undefined) {
       this.hoursDiffToInvalidateCache = hoursDiffToInvalidateCache;
     }
 
