@@ -33,7 +33,7 @@ export class FightersController {
     const response = this.parserService.fighter(fightersHtml);
     response.fighter.sherdogUrl = sherdogUrl;
 
-    cacheInstance.saveJson(response);
+    cacheInstance.saveJson(response, sherdogUrl);
     return response;
   }
 }

@@ -41,11 +41,11 @@ export class CacheService {
     return this.fs.readFile(path);
   }
 
-  saveJson(json: any) {
-    const path = this.generatePath(this.path);
+  saveJson(json: any, key: string) {
+    const path = this.generatePath(key);
     this.fs.writeFile(path, json);
     const sherdogConfig = this.fs.readFile(lastFetchedPath);
-    sherdogConfig[this.path] = new Date();
+    sherdogConfig[key] = new Date();
     this.fs.writeFile(lastFetchedPath, sherdogConfig);
   }
 

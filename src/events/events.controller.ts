@@ -40,7 +40,7 @@ export class EventsController {
 
     const result = await this.eventsService.getEventDetails(selector);
 
-    cacheInstance.saveJson(result);
+    cacheInstance.saveJson(result, resourceKey);
     return result;
   }
 }

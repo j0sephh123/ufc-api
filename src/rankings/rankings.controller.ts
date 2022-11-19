@@ -30,7 +30,7 @@ export class RankingsController {
     const rankingsHtml = await this.api.rankings();
     const response = this.parser.rankings(rankingsHtml);
 
-    cacheInstance.saveJson(response);
+    cacheInstance.saveJson(response, key);
     return response;
   }
 }
