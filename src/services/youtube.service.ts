@@ -98,7 +98,6 @@ export class YoutubeService {
 
   async getYoutubeVideo(id: string) {
     const url = `${baseURL}videos?id=${id}&key=${this.key}&part=${videoPart}`;
-
     const data = await this.fetcher.fetch(url);
     const rawVideo: VideoRawResponse = data.items[0];
 

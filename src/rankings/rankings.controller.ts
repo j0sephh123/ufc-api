@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { LastFetchedStaticKey } from 'src/models';
 import { ApiService } from 'src/services/api.service';
 import { CacheService } from 'src/services/cache.service';
@@ -15,11 +15,14 @@ export class RankingsController {
   ) {}
 
   @Get('/')
-  async get() {
+  async get(@Query('cache') cache?: 'false') {
     const key: LastFetchedStaticKey = 'ufc.rankings';
-    const cache = this.cacheService.init(key, generateHoursFromDays(5));
-    const cacheResult = cache.get();
-    cache.saveTimestamp();
+    const cacheInstance = this.cacheService.init(
+      key,
+      cache === 'false' ? 0 : generateHoursFromDays(5),
+    );
+    const cacheResult = cacheInstance.get();
+    cacheInstance.saveTimestamp();
 
     if (cacheResult) {
       return cacheResult;
@@ -28,7 +31,7 @@ export class RankingsController {
     const rankingsHtml = await this.api.rankings();
     const response = this.parser.rankings(rankingsHtml);
 
-    cache.saveJson(response);
+    cacheInstance.saveJson(response);
     return response;
   }
 }
