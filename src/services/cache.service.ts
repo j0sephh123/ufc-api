@@ -1,25 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { FsService } from './fs.service';
 import { differenceInHours } from 'date-fns';
-import { generateHoursFromDays } from 'src/utils/generate';
 
 const lastFetchedPath = 'db/lastFetched.json';
 
 @Injectable()
 export class CacheService {
-  path: string;
-  hoursDiffToInvalidateCache = generateHoursFromDays(2);
-
   constructor(private readonly fs: FsService) {}
-
-  init(path: string, hoursDiffToInvalidateCache?: number) {
-    this.path = path;
-    if (hoursDiffToInvalidateCache !== undefined) {
-      this.hoursDiffToInvalidateCache = hoursDiffToInvalidateCache;
-    }
-
-    return this;
-  }
 
   private generatePath(path: string) {
     return `db/cache/${path}.json`;
@@ -29,12 +16,8 @@ export class CacheService {
     return new Date(this.fs.readFile(lastFetchedPath)[path]);
   }
 
-  private shouldReadFromCache(lastFetchedDate: Date) {
-    const diff =
-      differenceInHours(new Date(), lastFetchedDate) <
-      this.hoursDiffToInvalidateCache;
-
-    return diff;
+  private shouldReadFromCache(lastFetchedDate: Date, hoursDiff: number) {
+    return differenceInHours(new Date(), lastFetchedDate) < hoursDiff;
   }
 
   private readFromCache(path: string) {
@@ -49,16 +32,18 @@ export class CacheService {
     this.fs.writeFile(lastFetchedPath, sherdogConfig);
   }
 
-  get() {
-    const path = this.generatePath(this.path);
+  get(key: string) {
+    console.log(key);
+
+    const path = this.generatePath(key);
     const exists = this.fs.fileExists(path);
 
     if (!exists) {
       return null;
     }
 
-    const lastFetchedDate = this.getLastFetched(this.path);
-    const shouldReadFromCache = this.shouldReadFromCache(lastFetchedDate);
+    const lastFetchedDate = this.getLastFetched(key);
+    const shouldReadFromCache = this.shouldReadFromCache(lastFetchedDate, 48);
 
     if (!shouldReadFromCache) {
       return null;
