@@ -1,8 +1,9 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { EventDetails, LastFetchedStaticKey } from '../models';
 import { CacheService } from 'src/services/cache.service';
 import { EventsService } from './events.service';
 import { generateEndpoint } from 'src/utils/routing';
+import { generateHoursFromDays } from 'src/utils/generate';
 
 export type EventType = 'upcoming' | 'recent';
 export type EventSelectors = 'upcoming_tab' | 'recent_tab';
@@ -22,18 +23,24 @@ export class EventsController {
   ) {}
 
   @Get(':type')
-  async single(@Param('type') type: EventType): Promise<EventDetails> {
+  async single(
+    @Param('type') type: EventType,
+    @Query('cache') cache?: 'false',
+  ): Promise<EventDetails> {
     const [resourceKey, selector] = mapEventType[type];
-    const cache = this.cacheService.init(resourceKey);
-    const cacheResult = cache.get() as EventDetails | null;
-    cache.saveTimestamp();
+    const cacheInstance = this.cacheService.init(
+      resourceKey,
+      cache === 'false' ? 0 : generateHoursFromDays(2),
+    );
+    const cacheResult = cacheInstance.get() as EventDetails | null;
+    cacheInstance.saveTimestamp();
 
     if (cacheResult) {
       return cacheResult;
     }
 
     const result = await this.eventsService.getEventDetails(selector);
-    cache.saveJson(result);
+    cacheInstance.saveJson(result);
     return result;
   }
 }

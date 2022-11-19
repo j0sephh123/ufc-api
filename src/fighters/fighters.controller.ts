@@ -1,8 +1,9 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { FighterResponse } from 'src/models';
 import { ApiService } from 'src/services/api.service';
 import { CacheService } from 'src/services/cache.service';
 import { ParserService } from 'src/services/parser.service';
+import { generateHoursFromDays } from 'src/utils/generate';
 import { generateEndpoint } from 'src/utils/routing';
 
 @Controller(generateEndpoint('fighters'))
@@ -14,10 +15,16 @@ export class FightersController {
   ) {}
 
   @Get(':sherdogUrl')
-  async single(@Param('sherdogUrl') sherdogUrl: string) {
-    const cache = this.cacheService.init(sherdogUrl);
-    const cacheResult = cache.get() as FighterResponse | null;
-    cache.saveTimestamp();
+  async single(
+    @Param('sherdogUrl') sherdogUrl: string,
+    @Query('cache') cache?: 'false',
+  ) {
+    const cacheInstance = this.cacheService.init(
+      sherdogUrl,
+      cache === 'false' ? 0 : generateHoursFromDays(2),
+    );
+    const cacheResult = cacheInstance.get() as FighterResponse | null;
+    cacheInstance.saveTimestamp();
 
     if (cacheResult) {
       return cacheResult;
@@ -27,7 +34,7 @@ export class FightersController {
     const response = this.parserService.fighter(fightersHtml);
     response.fighter.sherdogUrl = sherdogUrl;
 
-    cache.saveJson(response);
+    cacheInstance.saveJson(response);
     return response;
   }
 }

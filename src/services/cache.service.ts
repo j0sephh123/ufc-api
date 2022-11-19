@@ -12,6 +12,15 @@ export class CacheService {
 
   constructor(private readonly fs: FsService) {}
 
+  init(path: string, hoursDiffToInvalidateCache?: number) {
+    this.path = path;
+    if (hoursDiffToInvalidateCache !== undefined) {
+      this.hoursDiffToInvalidateCache = hoursDiffToInvalidateCache;
+    }
+
+    return this;
+  }
+
   private generatePath(path: string) {
     return `db/cache/${path}.json`;
   }
@@ -30,15 +39,6 @@ export class CacheService {
 
   private readFromCache(path: string) {
     return this.fs.readFile(path);
-  }
-
-  init(path: string, hoursDiffToInvalidateCache?: number) {
-    this.path = path;
-    if (hoursDiffToInvalidateCache !== undefined) {
-      this.hoursDiffToInvalidateCache = hoursDiffToInvalidateCache;
-    }
-
-    return this;
   }
 
   saveTimestamp() {
