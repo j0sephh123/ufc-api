@@ -16,8 +16,10 @@ export class CacheService {
     return new Date(this.fs.readFile(lastFetchedPath)[path]);
   }
 
-  private shouldReadFromCache(lastFetchedDate: Date, hoursDiff: number) {
-    return differenceInHours(new Date(), lastFetchedDate) < hoursDiff;
+  shouldReadFromCache(key: string) {
+    const lastFetchedDate = this.getLastFetched(key);
+
+    return differenceInHours(new Date(), lastFetchedDate) < 48;
   }
 
   private readFromCache(path: string) {
@@ -42,8 +44,7 @@ export class CacheService {
       return null;
     }
 
-    const lastFetchedDate = this.getLastFetched(key);
-    const shouldReadFromCache = this.shouldReadFromCache(lastFetchedDate, 48);
+    const shouldReadFromCache = this.shouldReadFromCache(key);
 
     if (!shouldReadFromCache) {
       return null;
