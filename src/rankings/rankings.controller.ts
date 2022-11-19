@@ -22,7 +22,6 @@ export class RankingsController {
       cache === 'false' ? 0 : generateHoursFromDays(5),
     );
     const cacheResult = cacheInstance.get();
-    cacheInstance.saveTimestamp();
 
     if (cacheResult) {
       return cacheResult;

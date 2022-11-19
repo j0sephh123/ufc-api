@@ -41,15 +41,12 @@ export class CacheService {
     return this.fs.readFile(path);
   }
 
-  saveTimestamp() {
-    const sherdogConfig = this.fs.readFile(lastFetchedPath);
-    sherdogConfig[this.path] = new Date();
-    this.fs.writeFile(lastFetchedPath, sherdogConfig);
-  }
-
   saveJson(json: any) {
     const path = this.generatePath(this.path);
     this.fs.writeFile(path, json);
+    const sherdogConfig = this.fs.readFile(lastFetchedPath);
+    sherdogConfig[this.path] = new Date();
+    this.fs.writeFile(lastFetchedPath, sherdogConfig);
   }
 
   get() {

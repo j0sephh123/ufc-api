@@ -24,7 +24,6 @@ export class FightersController {
       cache === 'false' ? 0 : generateHoursFromDays(2),
     );
     const cacheResult = cacheInstance.get() as FighterResponse | null;
-    cacheInstance.saveTimestamp();
 
     if (cacheResult) {
       return cacheResult;

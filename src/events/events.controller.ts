@@ -33,13 +33,13 @@ export class EventsController {
       cache === 'false' ? 0 : generateHoursFromDays(2),
     );
     const cacheResult = cacheInstance.get() as EventDetails | null;
-    cacheInstance.saveTimestamp();
 
     if (cacheResult) {
       return cacheResult;
     }
 
     const result = await this.eventsService.getEventDetails(selector);
+
     cacheInstance.saveJson(result);
     return result;
   }
