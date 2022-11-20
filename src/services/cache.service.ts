@@ -2,22 +2,22 @@ import { Injectable } from '@nestjs/common';
 import { FsService } from './fs.service';
 import { differenceInHours } from 'date-fns';
 
-const lastFetchedPath = 'db/lastFetched.json';
-
 @Injectable()
 export class CacheService {
   constructor(private readonly fs: FsService) {}
+
+  lastFetchedPath = 'db/lastFetched.json';
 
   private generatePath(path: string) {
     return `db/cache/${path}.json`;
   }
 
-  private getLastFetched(path: string) {
-    return new Date(this.fs.readFile(lastFetchedPath)[path]);
+  private getLastFetchedDate(path: string) {
+    return new Date(this.fs.readFile(this.lastFetchedPath)[path]);
   }
 
   shouldReadFromCache(key: string) {
-    const lastFetchedDate = this.getLastFetched(key);
+    const lastFetchedDate = this.getLastFetchedDate(key);
 
     return differenceInHours(new Date(), lastFetchedDate) > 48;
   }
@@ -29,9 +29,9 @@ export class CacheService {
   saveJson(json: any, key: string) {
     const path = this.generatePath(key);
     this.fs.writeFile(path, json);
-    const sherdogConfig = this.fs.readFile(lastFetchedPath);
+    const sherdogConfig = this.fs.readFile(this.lastFetchedPath);
     sherdogConfig[key] = new Date();
-    this.fs.writeFile(lastFetchedPath, sherdogConfig);
+    this.fs.writeFile(this.lastFetchedPath, sherdogConfig);
   }
 
   isInvalid(key: string) {
@@ -49,5 +49,13 @@ export class CacheService {
     const path = this.generatePath(key);
 
     return this.readFromCache(path);
+  }
+
+  getLastFetched() {
+    return this.fs.readFile(this.lastFetchedPath);
+  }
+
+  getItems() {
+    return this.fs.readCacheItems().map((item) => item.slice(0, -5));
   }
 }

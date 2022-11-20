@@ -18,6 +18,7 @@ import { ApiService } from './services/api.service';
 import { FetcherService } from './services/fetcher.service';
 import { FightersService } from './fighters/fighters.service';
 import { RankingsService } from './rankings/rankings.service';
+import { CacheController } from './cache/cache.controller';
 
 @Module({
   imports: [ConfigModule.forRoot(), HttpModule],
@@ -26,6 +27,7 @@ import { RankingsService } from './rankings/rankings.service';
     FightersController,
     YoutubeController,
     RankingsController,
+    CacheController,
   ],
   providers: [
     SherdogService,
