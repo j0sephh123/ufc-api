@@ -19,7 +19,7 @@ export class CacheService {
   shouldReadFromCache(key: string) {
     const lastFetchedDate = this.getLastFetched(key);
 
-    return differenceInHours(new Date(), lastFetchedDate) < 48;
+    return differenceInHours(new Date(), lastFetchedDate) > 48;
   }
 
   private readFromCache(path: string) {
@@ -34,26 +34,20 @@ export class CacheService {
     this.fs.writeFile(lastFetchedPath, sherdogConfig);
   }
 
-  get(key: string) {
-    console.log(key);
-
+  isInvalid(key: string) {
     const path = this.generatePath(key);
     const exists = this.fs.fileExists(path);
 
     if (!exists) {
-      return null;
+      return true;
     }
 
-    const shouldReadFromCache = this.shouldReadFromCache(key);
+    return this.shouldReadFromCache(key);
+  }
 
-    if (!shouldReadFromCache) {
-      return null;
-    }
+  get(key: string) {
+    const path = this.generatePath(key);
 
-    try {
-      return this.readFromCache(path);
-    } catch (e) {
-      return null;
-    }
+    return this.readFromCache(path);
   }
 }

@@ -26,4 +26,16 @@ export class EventsService {
     this.cacheService.saveJson(result, resourceKey);
     return result;
   }
+
+  async getEvents(
+    resourceKey: string,
+    selector: EventSelectors,
+    skipCache: boolean,
+  ) {
+    if (skipCache || this.cacheService.isInvalid(resourceKey)) {
+      return this.fetchEvents(resourceKey, selector);
+    }
+
+    return this.cacheService.get(resourceKey);
+  }
 }

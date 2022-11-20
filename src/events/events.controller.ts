@@ -1,6 +1,5 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { LastFetchedStaticKey } from '../models';
-import { CacheService } from 'src/services/cache.service';
 import { EventsService } from './events.service';
 import { generateEndpoint } from 'src/utils/routing';
 
@@ -16,28 +15,16 @@ const mapEventType = <
 
 @Controller(generateEndpoint('events'))
 export class EventsController {
-  constructor(
-    private readonly cacheService: CacheService,
-    private readonly eventsService: EventsService,
-  ) {}
+  constructor(private readonly eventsService: EventsService) {}
 
   @Get(':type')
-  async single(
+  async getEvents(
     @Param('type') type: EventType,
     @Query('cache') cache?: 'false',
   ) {
     const skipCache = cache === 'false';
     const [resourceKey, selector] = mapEventType[type];
 
-    if (skipCache) {
-      return this.eventsService.fetchEvents(resourceKey, selector);
-    }
-
-    const cacheResult = this.cacheService.get(resourceKey);
-    if (cacheResult) {
-      return cacheResult;
-    }
-
-    return this.eventsService.fetchEvents(resourceKey, selector);
+    return this.eventsService.getEvents(resourceKey, selector, skipCache);
   }
 }

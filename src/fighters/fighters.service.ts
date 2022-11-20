@@ -18,4 +18,12 @@ export class FightersService {
     this.cacheService.saveJson(response, sherdogUrl);
     return response;
   }
+
+  async getFighters(key: string, skipCache: boolean) {
+    if (skipCache || this.cacheService.isInvalid(key)) {
+      return this.fetchFighters(key);
+    }
+
+    return this.cacheService.get(key);
+  }
 }
