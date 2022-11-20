@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync, readdirSync } from 'fs';
 
 @Injectable()
 export class FsService {
+  cachePath = 'db/cache';
+
   readFile(path: string) {
     return JSON.parse(readFileSync(path, 'utf8'));
   }
@@ -13,5 +15,9 @@ export class FsService {
 
   fileExists(path: string) {
     return existsSync(path);
+  }
+
+  readCacheItems() {
+    return readdirSync(this.cachePath);
   }
 }
