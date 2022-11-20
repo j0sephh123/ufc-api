@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { LastFetchedStaticKey } from '../models';
-import { EventsService } from './events.service';
+import { EventService } from './event.service';
 import { generateEndpoint } from 'src/utils/routing';
 
 export type EventType = 'upcoming' | 'recent';
@@ -13,9 +13,9 @@ const mapEventType = <
   upcoming: ['sherdog.upcomingEvent', 'upcoming_tab'],
 };
 
-@Controller(generateEndpoint('events'))
-export class EventsController {
-  constructor(private readonly eventsService: EventsService) {}
+@Controller(generateEndpoint('event'))
+export class EventController {
+  constructor(private readonly eventService: EventService) {}
 
   @Get(':type')
   async getEvents(
@@ -25,6 +25,6 @@ export class EventsController {
     const skipCache = cache === 'false';
     const [resourceKey, selector] = mapEventType[type];
 
-    return this.eventsService.getEvents(resourceKey, selector, skipCache);
+    return this.eventService.getEvents(resourceKey, selector, skipCache);
   }
 }

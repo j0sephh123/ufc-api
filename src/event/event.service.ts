@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { ApiService } from 'src/services/api.service';
 import { CacheService } from 'src/services/cache.service';
 import { ParserService } from 'src/services/parser.service';
-import { EventSelectors } from './events.controller';
+import { EventSelectors } from './event.controller';
 
 @Injectable()
-export class EventsService {
+export class EventService {
   constructor(
     private readonly api: ApiService,
     private readonly parserService: ParserService,
