@@ -68,7 +68,7 @@ export class ParserService {
     };
   }
 
-  private sherdogUpcomingMatches(data: string) {
+  private sherdogMatches(data: string) {
     const $ = load(data);
 
     return $(selectors.sherdog.subEvent)
@@ -131,8 +131,10 @@ export class ParserService {
 
   events = (data: string, selector: string): EventDetails =>
     this.sherdogEvents(data, selector);
-  upcomingMatches = (data: string): Match[] =>
-    this.sherdogUpcomingMatches(data);
+
+  eventMatches = (data: string): Match[] => this.sherdogMatches(data);
+
   fighter = (data: string): FighterResponse => this.sherdogFighter(data);
+
   rankings = (data: string) => this.ufcRankings(data);
 }

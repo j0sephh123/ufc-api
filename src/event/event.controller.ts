@@ -18,13 +18,20 @@ export class EventController {
   constructor(private readonly eventService: EventService) {}
 
   @Get(':type')
-  async getEvents(
-    @Param('type') type: EventType,
-    @Query('cache') cache?: 'false',
-  ) {
+  getEvents(@Param('type') type: EventType, @Query('cache') cache?: 'false') {
     const skipCache = cache === 'false';
     const [resourceKey, selector] = mapEventType[type];
 
     return this.eventService.getEvents(resourceKey, selector, skipCache);
+  }
+
+  @Get('sherdog/:sherdogUrl')
+  async getEventFromSherdog(
+    @Param('sherdogUrl') sherdogUrl: string,
+    @Query('cache') cache?: 'false',
+  ) {
+    const skipCache = cache === 'false';
+
+    return this.eventService.getEventFromSherdog(sherdogUrl, skipCache);
   }
 }

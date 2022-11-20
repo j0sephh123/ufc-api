@@ -16,7 +16,7 @@ export class EventService {
     const eventsHtml = await this.api.events();
     const event = this.parserService.events(eventsHtml, selector);
     const eventHtml = await this.api.event(event.sherdogUrl);
-    const eventMatches = this.parserService.upcomingMatches(eventHtml);
+    const eventMatches = this.parserService.eventMatches(eventHtml);
 
     return { ...event, matches: eventMatches };
   }
@@ -37,5 +37,16 @@ export class EventService {
     }
 
     return this.cacheService.get(resourceKey);
+  }
+
+  async getEventFromSherdog(sherdogUrl: string, skipCache: boolean) {
+    if (skipCache || this.cacheService.isInvalid(sherdogUrl)) {
+      const eventHtml = await this.api.event(sherdogUrl);
+      const eventMatches = this.parserService.eventMatches(eventHtml);
+      this.cacheService.saveJson(eventMatches, sherdogUrl);
+      return eventMatches;
+    }
+
+    return this.cacheService.get(sherdogUrl);
   }
 }

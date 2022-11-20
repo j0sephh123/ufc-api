@@ -18,7 +18,11 @@ export class SherdogService {
   event = (eventPageUrl: string): Promise<string> => {
     this.logger.debug('fetching event...');
 
-    return this.fetcher.fetch(`${sherdogBaseUrl}${eventPageUrl}`);
+    const shouldPrepend = !eventPageUrl.includes('events');
+
+    return this.fetcher.fetch(
+      `${sherdogBaseUrl}${shouldPrepend ? 'events/' : ''}${eventPageUrl}`,
+    );
   };
 
   fighter = (fighterPageUrl: string): Promise<string> => {

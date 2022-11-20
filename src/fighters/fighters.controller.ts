@@ -7,7 +7,7 @@ export class FightersController {
   constructor(private readonly fightersService: FightersService) {}
 
   @Get(':sherdogUrl')
-  async single(
+  async getFighter(
     @Param('sherdogUrl') sherdogUrl: string,
     @Query('cache') cache?: 'false',
   ) {
