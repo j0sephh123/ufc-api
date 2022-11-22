@@ -27,6 +27,8 @@ export class CacheService {
   }
 
   saveJson(json: any, key: string) {
+    console.log(json);
+
     const path = this.generatePath(key);
     this.fs.writeFile(path, json);
     const sherdogConfig = this.fs.readFile(this.lastFetchedPath);
@@ -55,7 +57,7 @@ export class CacheService {
     return this.fs.readFile(this.lastFetchedPath);
   }
 
-  getItems() {
-    return this.fs.readCacheItems().map((item) => item.slice(0, -5));
+  getFiles() {
+    return this.fs.readCacheFiles().map((item) => item.slice(0, -5));
   }
 }

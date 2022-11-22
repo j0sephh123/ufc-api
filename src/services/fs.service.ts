@@ -17,7 +17,7 @@ export class FsService {
     return existsSync(path);
   }
 
-  readCacheItems() {
+  readCacheFiles() {
     return readdirSync(this.cachePath);
   }
 }

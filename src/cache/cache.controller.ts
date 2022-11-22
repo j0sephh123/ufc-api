@@ -11,8 +11,8 @@ export class CacheController {
     return this.cacheService.getLastFetched();
   }
 
-  @Get('items')
-  getItems() {
-    return this.cacheService.getItems();
+  @Get('files')
+  getFiles() {
+    return this.cacheService.getFiles();
   }
 }
