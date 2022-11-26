@@ -60,4 +60,8 @@ export class CacheService {
   getFiles() {
     return this.fs.readCacheFiles().map((item) => item.slice(0, -5));
   }
+
+  getFile(fileName: string) {
+    return this.fs.readFile(this.generatePath(fileName));
+  }
 }

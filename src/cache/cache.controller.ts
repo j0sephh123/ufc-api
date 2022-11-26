@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { CacheService } from 'src/services/cache.service';
 import { generateEndpoint } from 'src/utils/routing';
 
@@ -14,5 +14,10 @@ export class CacheController {
   @Get('files')
   getFiles() {
     return this.cacheService.getFiles();
+  }
+
+  @Get('files/:fileName')
+  getFile(@Param('fileName') fileName: string) {
+    return this.cacheService.getFile(fileName);
   }
 }
